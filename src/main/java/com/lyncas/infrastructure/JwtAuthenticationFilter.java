@@ -22,12 +22,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   @Override
   public Authentication attemptAuthentication(HttpServletRequest request,
       HttpServletResponse response) {
-    return super.attemptAuthentication(request, response);
+    // Não aplicável para a autenticação de JWT
+    return null;
   }
 
   @Override
-  protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-      FilterChain chain, Authentication authResult) throws IOException, ServletException {
+  protected void successfulAuthentication(HttpServletRequest request,
+      HttpServletResponse response,
+      FilterChain chain,
+      Authentication authResult) throws IOException, ServletException {
     String token = Jwts.builder()
         .setSubject(((User) authResult.getPrincipal()).getUsername())
         .signWith(SignatureAlgorithm.HS512, jwtSecret.getBytes())
