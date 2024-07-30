@@ -1,5 +1,12 @@
 package com.lyncas.application.contasapagar;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lyncas.domain.contasapagar.ContasAPagarEntity;
 import com.lyncas.domain.contasapagar.ContasAPagarService;
@@ -20,18 +27,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ContasAPagarController.class)
 class ContasAPagarControllerTest {
@@ -50,6 +51,7 @@ class ContasAPagarControllerTest {
 
   @Test
   @DisplayName("Deve retornar HTTP Status Code 200 ao salvar uma nova conta a pagar")
+  @WithMockUser(username = "tiago", roles = {"USER"})
   void shouldReturnHttpStatusWhenSavingNewContasAPagar() throws Exception {
     ContasAPagarRequest request = ContasAPagarRequest.builder()
         .dataVencimento(LocalDate.of(2024, 1, 15))
@@ -86,6 +88,7 @@ class ContasAPagarControllerTest {
 
   @Test
   @DisplayName("Deve retornar HTTP Status Code 200 ao atualizar uma conta a pagar existente")
+  @WithMockUser(username = "tiago", roles = {"USER"})
   void shouldReturnHttpStatusWhenUpdatingContasAPagar() throws Exception {
     UUID id = UUID.randomUUID();
     ContasAPagarRequest request = ContasAPagarRequest.builder()
@@ -134,6 +137,7 @@ class ContasAPagarControllerTest {
 
   @Test
   @DisplayName("Deve retornar HTTP Status Code 200 ao atualizar a situação de uma conta a pagar")
+  @WithMockUser(username = "tiago", roles = {"USER"})
   void shouldReturnHttpStatusWhenUpdatingContasAPagarSituacao() throws Exception {
     UUID id = UUID.randomUUID();
     ContasAPagarRequest request = ContasAPagarRequest.builder()
@@ -178,6 +182,7 @@ class ContasAPagarControllerTest {
 
   @Test
   @DisplayName("Deve retornar HTTP Status Code 200 ao obter uma conta a pagar pelo ID")
+  @WithMockUser(username = "tiago", roles = {"USER"})
   void shouldReturnHttpStatusWhenGettingContaAPagarById() throws Exception {
     UUID id = UUID.randomUUID();
     ContasAPagarEntity entity = ContasAPagarEntity.builder()
@@ -206,6 +211,7 @@ class ContasAPagarControllerTest {
 
   @Test
   @DisplayName("Deve retornar HTTP Status Code 200 ao obter o valor total pago por período")
+  @WithMockUser(username = "tiago", roles = {"USER"})
   void shouldReturnHttpStatusWhenGettingTotalPagoPorPeriodo() throws Exception {
     LocalDate startDate = LocalDate.of(2024, 1, 1);
     LocalDate endDate = LocalDate.of(2024, 12, 31);
@@ -226,6 +232,7 @@ class ContasAPagarControllerTest {
 
   @Test
   @DisplayName("Deve retornar HTTP Status Code 200 ao obter contas a pagar paginadas por vencimento e descrição")
+  @WithMockUser(username = "tiago", roles = {"USER"})
   void shouldReturnHttpStatusWhenGettingContasPaginadasPorVencimentoEDescricao() throws Exception {
     LocalDate startDate = LocalDate.of(2024, 1, 1);
     LocalDate endDate = LocalDate.of(2024, 12, 31);
@@ -268,6 +275,7 @@ class ContasAPagarControllerTest {
 
   @Test
   @DisplayName("Deve retornar HTTP Status Code 200 ao importar contas a pagar de um arquivo CSV")
+  @WithMockUser(username = "tiago", roles = {"USER"})
   void shouldReturnHttpStatusWhenImportingContasAPagarFromCSV() throws Exception {
     String csvContent = "dataVencimento,dataPagamento,valor,descricao,situacao\n" +
         "2024-01-15,2024-01-10,1500.00,Compra de materiais,Pago\n" +
