@@ -1,0 +1,23 @@
+dataVencimento,dataPagamento,valor,descricao,situacao
+2024-01-15,2024-01-10,1500.00,Compra de materiais,Pago
+2024-02-20,2024-02-15,1200.00,Serviço de limpeza,Pendente
+2024-03-05,2024-03-01,800.00,Consultoria,Pendente
+2024-04-10,2024-04-05,1000.00,Assinatura de software,Pago
+2024-05-15,2024-05-10,900.00,Taxa de manutenção,Pendente
+2024-06-20,2024-06-15,1100.00,Despesas de viagem,Pendente
+2024-07-25,2024-07-20,1300.00,Frete e transporte,Pendente
+2024-08-30,2024-08-25,1400.00,Compra de equipamentos,Pago
+2024-09-15,2024-09-10,750.00,Material de escritório,Pendente
+2024-10-20,2024-10-15,1250.00,Serviço de consultoria,Pendente
+2024-11-25,2024-11-20,1600.00,Compra de software,Pago
+2024-12-05,2024-12-01,1800.00,Equipamentos de TI,Pendente
+2025-01-10,2025-01-05,950.00,Serviço de limpeza,Pendente
+2025-02-15,2025-02-10,850.00,Manutenção predial,Pendente
+2025-03-20,2025-03-15,700.00,Despesas de marketing,Pendente
+2025-04-25,2025-04-20,1200.00,Despesas de viagem,Pago
+2025-05-30,2025-05-25,1400.00,Consultoria externa,Pendente
+2025-06-10,2025-06-05,1100.00,Taxa de licença,Pago
+2025-07-15,2025-07-10,1600.00,Compra de novos equipamentos,Pendente
+2025-08-20,2025-08-15,2000.00,Serviço de auditoria,Pendente
+2025-09-25,2025-09-20,1300.00,Compra de materiais diversos,Pago
+2025-10-30,2025-10-25,900.00,Serviço de manutenção,Pendente

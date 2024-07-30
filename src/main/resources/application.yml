@@ -1,0 +1,13 @@
+# Database
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lyncas_db
+    username: postgres
+    password: password
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: your_secret_key
