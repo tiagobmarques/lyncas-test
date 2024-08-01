@@ -8,13 +8,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lyncas.JwtAuthenticationFilter;
 import com.lyncas.domain.contasapagar.ContasAPagarEntity;
 import com.lyncas.domain.contasapagar.ContasAPagarService;
+import com.lyncas.infrastructure.security.JwtService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(ContasAPagarController.class)
@@ -48,6 +52,18 @@ class ContasAPagarControllerTest {
 
   @Autowired
   private ObjectMapper objectMapper;
+
+  @MockBean
+  private JwtService jwtService;
+
+  @BeforeEach
+  void setUp() {
+    JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtService);
+    mockMvc = MockMvcBuilders
+        .standaloneSetup(new ContasAPagarController(service, mapper))
+        .addFilters(jwtFilter)
+        .build();
+  }
 
   @Test
   @DisplayName("Deve retornar HTTP Status Code 200 ao salvar uma nova conta a pagar")
@@ -79,8 +95,12 @@ class ContasAPagarControllerTest {
 
     resultActions
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.dataVencimento").value("2024-01-15"))
-        .andExpect(jsonPath("$.dataPagamento").value("2024-01-10"))
+        .andExpect(jsonPath("$.dataVencimento[0]").value(2024))
+        .andExpect(jsonPath("$.dataVencimento[1]").value(1))
+        .andExpect(jsonPath("$.dataVencimento[2]").value(15))
+        .andExpect(jsonPath("$.dataPagamento[0]").value(2024))
+        .andExpect(jsonPath("$.dataPagamento[1]").value(1))
+        .andExpect(jsonPath("$.dataPagamento[2]").value(10))
         .andExpect(jsonPath("$.valor").value("1500.0"))
         .andExpect(jsonPath("$.descricao").value("Compra de materiais"))
         .andExpect(jsonPath("$.situacao").value("Pago"));
@@ -128,8 +148,12 @@ class ContasAPagarControllerTest {
 
     resultActions
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.dataVencimento").value("2024-01-15"))
-        .andExpect(jsonPath("$.dataPagamento").value("2024-01-10"))
+        .andExpect(jsonPath("$.dataVencimento[0]").value(2024))
+        .andExpect(jsonPath("$.dataVencimento[1]").value(1))
+        .andExpect(jsonPath("$.dataVencimento[2]").value(15))
+        .andExpect(jsonPath("$.dataPagamento[0]").value(2024))
+        .andExpect(jsonPath("$.dataPagamento[1]").value(1))
+        .andExpect(jsonPath("$.dataPagamento[2]").value(10))
         .andExpect(jsonPath("$.valor").value("1500.0"))
         .andExpect(jsonPath("$.descricao").value("Compra de materiais"))
         .andExpect(jsonPath("$.situacao").value("Pago"));
@@ -173,8 +197,12 @@ class ContasAPagarControllerTest {
 
     resultActions
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.dataVencimento").value("2024-01-15"))
-        .andExpect(jsonPath("$.dataPagamento").value("2024-01-10"))
+        .andExpect(jsonPath("$.dataVencimento[0]").value(2024))
+        .andExpect(jsonPath("$.dataVencimento[1]").value(1))
+        .andExpect(jsonPath("$.dataVencimento[2]").value(15))
+        .andExpect(jsonPath("$.dataPagamento[0]").value(2024))
+        .andExpect(jsonPath("$.dataPagamento[1]").value(1))
+        .andExpect(jsonPath("$.dataPagamento[2]").value(10))
         .andExpect(jsonPath("$.valor").value("1500.0"))
         .andExpect(jsonPath("$.descricao").value("Compra de materiais"))
         .andExpect(jsonPath("$.situacao").value("Pendente"));
@@ -202,8 +230,12 @@ class ContasAPagarControllerTest {
 
     resultActions
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.dataVencimento").value("2024-01-15"))
-        .andExpect(jsonPath("$.dataPagamento").value("2024-01-10"))
+        .andExpect(jsonPath("$.dataVencimento[0]").value(2024))
+        .andExpect(jsonPath("$.dataVencimento[1]").value(1))
+        .andExpect(jsonPath("$.dataVencimento[2]").value(15))
+        .andExpect(jsonPath("$.dataPagamento[0]").value(2024))
+        .andExpect(jsonPath("$.dataPagamento[1]").value(1))
+        .andExpect(jsonPath("$.dataPagamento[2]").value(10))
         .andExpect(jsonPath("$.valor").value("1500.0"))
         .andExpect(jsonPath("$.descricao").value("Compra de materiais"))
         .andExpect(jsonPath("$.situacao").value("Pago"));
@@ -237,7 +269,6 @@ class ContasAPagarControllerTest {
     LocalDate startDate = LocalDate.of(2024, 1, 1);
     LocalDate endDate = LocalDate.of(2024, 12, 31);
     String descricao = "Compra";
-    Pageable pageable = PageRequest.of(0, 10);
 
     ContasAPagarEntity entity = ContasAPagarEntity.builder()
         .dataVencimento(LocalDate.of(2024, 1, 15))
@@ -247,9 +278,12 @@ class ContasAPagarControllerTest {
         .situacao("Pago")
         .build();
 
-    Page<ContasAPagarEntity> pagedResult = new PageImpl<>(Collections.singletonList(entity), pageable, 1);
+    Pageable pageable = PageRequest.of(0, 10);
+    Page<ContasAPagarEntity> pagedResult = new PageImpl<>(Collections.singletonList(entity),
+        pageable, 1);
 
-    when(service.getContasPaginadasPorVencimentoEDescricao(startDate, endDate, descricao, pageable)).thenReturn(pagedResult);
+    when(service.getContasPaginadasPorVencimentoEDescricao(startDate, endDate, descricao,
+        pageable)).thenReturn(pagedResult);
 
     ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
         .get("/contasapagar")
@@ -262,8 +296,12 @@ class ContasAPagarControllerTest {
 
     resultActions
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.content[0].dataVencimento").value("2024-01-15"))
-        .andExpect(jsonPath("$.content[0].dataPagamento").value("2024-01-10"))
+        .andExpect(jsonPath("$.content[0].dataVencimento[0]").value(2024))
+        .andExpect(jsonPath("$.content[0].dataVencimento[1]").value(1))
+        .andExpect(jsonPath("$.content[0].dataVencimento[2]").value(15))
+        .andExpect(jsonPath("$.content[0].dataPagamento[0]").value(2024))
+        .andExpect(jsonPath("$.content[0].dataPagamento[1]").value(1))
+        .andExpect(jsonPath("$.content[0].dataPagamento[2]").value(10))
         .andExpect(jsonPath("$.content[0].valor").value("1500.0"))
         .andExpect(jsonPath("$.content[0].descricao").value("Compra de materiais"))
         .andExpect(jsonPath("$.content[0].situacao").value("Pago"))
@@ -288,9 +326,10 @@ class ContasAPagarControllerTest {
         csvContent.getBytes()
     );
 
-    ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/contasapagar/importar")
-        .file(file)
-        .accept(MediaType.APPLICATION_JSON));
+    ResultActions resultActions = mockMvc.perform(
+        MockMvcRequestBuilders.multipart("/contasapagar/importar")
+            .file(file)
+            .accept(MediaType.APPLICATION_JSON));
 
     resultActions
         .andExpect(status().isOk());

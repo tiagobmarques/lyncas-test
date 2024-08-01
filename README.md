@@ -22,14 +22,15 @@ Para rodar este projeto é necessário ter algumas ferramentas instaladas:
 Para rodar a aplicação é necessário antes alguns passos:
 
 ```
-docker-compose up -d
+./gradlew build
 ```
-Este comando acima irá subir o banco de dados para realizar o teste local. 
+O comando acima irá baixar as dependências e gerar o artefato(.jar) da aplicação.
 
 ```
-./gradlew bootRun
+docker-compose up --build
 ```
-O comando acima irá baixar as dependências e rodar a aplicação na porta 8080.
+Este comando acima irá subir o banco de dados e aplicação dentro de um container docker para realizar o teste local. 
+
 
 #### Rodar os testes
 
@@ -42,19 +43,27 @@ O comando acima irá rodar os testes unitários e os testes de contrato.
 
 #### Acessando a documentação da aplicação
 
-Toda aplicação está documentada via Swagger. Para acessar basta clicar neste [link](http://localhost:8080/swagger-ui.html).
+Toda aplicação está documentada via Swagger. Para acessar basta clicar neste [link](http://localhost:8080/swagger-ui/index.html).
+
+#### Criando um usuario para autenticar
+```
+curl --location 'http://localhost:8080/auth/signup' \
+--header 'Content-Type: application/json' \
+--data '{"name": "tiago", "password": "password123"}'
+```
 
 #### Autenticando
 ```
 curl --location 'http://localhost:8080/auth/login' \
 --header 'Content-Type: application/json' \
---data '{"username": "tiago", "password": "password123"}'
+--data '{"name": "tiago", "password": "password123"}'
 ```
 
 #### Salvar contas a pagar
 ```
 curl --location 'localhost:8080/contasapagar' \
 --header 'Content-Type: application/json' \
+--header 'Authorization: Bearer seu token' \
 --data '{
   "dataVencimento": "2024-08-01",
   "dataPagamento": "2024-07-25",
@@ -68,6 +77,7 @@ curl --location 'localhost:8080/contasapagar' \
 #### Importar CSV
 ```
 curl --location 'localhost:8080/contasapagar/importar' \
+--header 'Authorization: Bearer seu token' \
 --form 'file=@"/C:/Users/tiago.marques/Documents/pessoal/lyncas-test/contasapagar.csv"'
 ```
 
@@ -75,6 +85,7 @@ curl --location 'localhost:8080/contasapagar/importar' \
 ```
 curl --location --request PUT 'localhost:8080/contasapagar/97256956-db23-4ac8-a30d-386f5b9dcc1d' \
 --header 'Content-Type: application/json' \
+--header 'Authorization: Bearer seu token' \
 --data '{
   "dataVencimento": "2024-08-01",
   "dataPagamento": "2024-07-25",
@@ -89,6 +100,7 @@ curl --location --request PUT 'localhost:8080/contasapagar/97256956-db23-4ac8-a3
 ```
 curl --location --request PUT 'localhost:8080/contasapagar/97256956-db23-4ac8-a30d-386f5b9dcc1d/situacao' \
 --header 'Content-Type: application/json' \
+--header 'Authorization: Bearer seu token' \
 --data '{
   "situacao": "aprovado"
 }
@@ -99,6 +111,7 @@ curl --location --request PUT 'localhost:8080/contasapagar/97256956-db23-4ac8-a3
 ```
 curl --location --request GET 'localhost:8080/contasapagar/97256956-db23-4ac8-a30d-386f5b9dcc1d' \
 --header 'Content-Type: application/json' \
+--header 'Authorization: Bearer seu token' \
 --data '{
   "situacao": "aprovado"
 }
@@ -109,6 +122,7 @@ curl --location --request GET 'localhost:8080/contasapagar/97256956-db23-4ac8-a3
 ```
 curl --location --request GET 'localhost:8080/contasapagar/total-pago?startDate=2024-01-01&endDate=2025-01-31' \
 --header 'Content-Type: application/json' \
+--header 'Authorization: Bearer seu token' \
 --data '{
   "situacao": "aprovado"
 }
@@ -118,4 +132,5 @@ curl --location --request GET 'localhost:8080/contasapagar/total-pago?startDate=
 #### Buscar lista por paginação
 ```
 curl --location 'localhost:8080/contasapagar?startDate=2024-01-01&endDate=2025-01-31&page=1&size=3' \
+--header 'Authorization: Bearer seu token' \
 ```

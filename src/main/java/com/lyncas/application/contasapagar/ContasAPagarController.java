@@ -12,8 +12,8 @@ import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -126,14 +126,13 @@ public class ContasAPagarController {
   })
   @GetMapping
   public Page<ContasAPagarResponse> getContasPaginadasPorVencimentoEDescricao(
-      @RequestParam("startDate") @ApiParam(value = "Data inicial do período", required = true)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-      @RequestParam("endDate") @ApiParam(value = "Data final do período", required = true)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-      @RequestParam(value = "descricao", required = false, defaultValue = "")
-      @ApiParam(value = "Descrição para filtrar as contas", required = false) String descricao,
-      @PageableDefault(size = 10) Pageable pageable) {
+      @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+      @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+      @RequestParam(value = "descricao", required = false, defaultValue = "") String descricao,
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size) {
 
+    Pageable pageable = PageRequest.of(page, size);
     Page<ContasAPagarEntity> contas = service.getContasPaginadasPorVencimentoEDescricao(startDate,
         endDate, descricao, pageable);
 

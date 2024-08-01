@@ -15,15 +15,24 @@ services:
       - "-c"
       - "effective_cache_size=1024MB"
     networks:
-      - network-backend
+      - network-lyncas
     volumes:
       - ./srv/docker/postgresql:/var/lib/postgresql
-#      - ./database:/docker-entrypoint-initdb.d
+
+  app:
+    build: .
+    container_name: "spring-app"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    networks:
+      - network-lyncas
 
 volumes:
   data:
     driver: local
 
 networks:
-  network-backend:
+  network-lyncas:
     driver: bridge

@@ -9,14 +9,14 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.schema.ModelRef;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.ResponseMessage;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -29,38 +29,34 @@ public class SwaggerConfig {
         .select()
         .apis(RequestHandlerSelectors.basePackage("com.lyncas"))
         .paths(PathSelectors.any())
-        .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
         .build()
-        .useDefaultResponseMessages(false)
-        .globalResponseMessage(RequestMethod.POST, responseMessageForPost())
-        .apiInfo(apiInfo());
-  }
-
-  private List<ResponseMessage> responseMessageForPost() {
-    return new ArrayList<>() {{
-      add(new ResponseMessageBuilder()
-          .code(500)
-          .message("Erro interno da aplicação")
-          .responseModel(new ModelRef("Error"))
-          .build());
-      add(new ResponseMessageBuilder()
-          .code(403)
-          .message("Forbidden!")
-          .build());
-    }};
+        .apiInfo(apiInfo())
+        .securitySchemes(Collections.singletonList(apiKey()))
+        .securityContexts(Collections.singletonList(securityContext()));
   }
 
   private ApiInfo apiInfo() {
     return new ApiInfoBuilder()
         .title("Contas a Pagar API")
-        .description(
-            "A aplicação de contas a pagar é um sistema desenvolvido para gerenciar e acompanhar todas as contas que uma empresa ou indivíduo precisa pagar. A aplicação oferece funcionalidades para o registro, atualização e consulta das contas a pagar, permitindo um controle financeiro mais eficiente.")
+        .description("Descrição da API")
         .version("1.0.0")
-        .license("Apache License Version 2.0")
-        .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
-        .contact(
-            new Contact("Tiago Marques", "www.linkedin.com/in/tiago-bitencourt-marques-2996591a2",
-                "tiagobm564@gmail.com"))
         .build();
+  }
+
+  private ApiKey apiKey() {
+    return new ApiKey("JWT", "Authorization", "header");
+  }
+
+  private SecurityContext securityContext() {
+    return SecurityContext.builder()
+        .securityReferences(defaultAuth())
+        .build();
+  }
+
+  private List<SecurityReference> defaultAuth() {
+    AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+    AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+    authorizationScopes[0] = authorizationScope;
+    return Collections.singletonList(new SecurityReference("JWT", authorizationScopes));
   }
 }
